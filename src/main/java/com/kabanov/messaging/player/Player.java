@@ -1,6 +1,5 @@
 package com.kabanov.messaging.player;
 
-import com.kabanov.messaging.Event;
 import com.kabanov.messaging.messages.Message;
 
 /**
@@ -18,7 +17,5 @@ public interface Player {
 
     void send(Message message);
 
-    Message receiveMessage();
-    
-    void onEventReceived(Event event);
+    Message receiveMessage(); 
 }

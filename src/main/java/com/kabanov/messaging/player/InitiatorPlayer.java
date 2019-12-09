@@ -1,6 +1,6 @@
 package com.kabanov.messaging.player;
 
-import com.kabanov.messaging.Event;
+import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.MessageCreator;
 import com.kabanov.messaging.transport.Package;
@@ -9,7 +9,7 @@ import com.kabanov.messaging.transport.PackageTransport;
 /**
  * @author Kabanov Alexey
  */
-public class InitiatorPlayer implements Player {
+public class InitiatorPlayer implements EventListeningPlayer {
 
     private MessageCreator messageCreator;
     private PackageTransport packageTransport;
@@ -38,11 +38,12 @@ public class InitiatorPlayer implements Player {
             send(message);
             receiveMessage();
         }
+        System.out.println("Player " + getName() + " stopped");
     }
 
     @Override
     public void stop() {
-        
+        // TODO fix stop method
     }
 
     @Override

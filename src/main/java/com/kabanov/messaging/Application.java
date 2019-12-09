@@ -5,10 +5,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.kabanov.messaging.event.Event;
+import com.kabanov.messaging.event.EventTransport;
+import com.kabanov.messaging.event.ThreadsEventTransport;
 import com.kabanov.messaging.messages.IncrementingReplyCreator;
 import com.kabanov.messaging.messages.RandomMessageCreator;
+import com.kabanov.messaging.player.EventListeningPlayer;
 import com.kabanov.messaging.player.InitiatorPlayer;
-import com.kabanov.messaging.player.Player;
 import com.kabanov.messaging.player.RespondingPlayer;
 import com.kabanov.messaging.transport.ThreadsPackageTransport;
 
@@ -23,19 +26,23 @@ public class Application {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         ThreadsPackageTransport threadsPackageTransport = new ThreadsPackageTransport();
+        EventTransport eventTransport = new ThreadsEventTransport();
         
-        Player initiatorPlayer = new InitiatorPlayer(new RandomMessageCreator(), threadsPackageTransport);
-        Player respondingPlayer = new RespondingPlayer(new IncrementingReplyCreator(), threadsPackageTransport);
+        EventListeningPlayer initiatorPlayer = new InitiatorPlayer(new RandomMessageCreator(), threadsPackageTransport);
+        EventListeningPlayer respondingPlayer = new RespondingPlayer(new IncrementingReplyCreator(), threadsPackageTransport);
         
         initiatorPlayer.setOpponentName(respondingPlayer.getName());
         respondingPlayer.setOpponentName(initiatorPlayer.getName());
 
+        eventTransport.register(initiatorPlayer.getName(), initiatorPlayer);
+        eventTransport.register(respondingPlayer.getName(), respondingPlayer);
+        
         Future<?> initiatorPlayerFuture = service.submit(initiatorPlayer::run);
         service.submit(respondingPlayer::run);
 
         initiatorPlayerFuture.get();
-        initiatorPlayer.stop();
-        respondingPlayer.stop();
+
+        eventTransport.sendEvent(respondingPlayer.getName(), Event.STOP);
 
         service.shutdown();
     }

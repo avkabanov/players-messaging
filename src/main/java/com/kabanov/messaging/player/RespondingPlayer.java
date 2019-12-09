@@ -1,6 +1,6 @@
 package com.kabanov.messaging.player;
 
-import com.kabanov.messaging.Event;
+import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.ReplyCreator;
 import com.kabanov.messaging.transport.Package;
@@ -9,11 +9,12 @@ import com.kabanov.messaging.transport.PackageTransport;
 /**
  * @author Kabanov Alexey
  */
-public class RespondingPlayer implements Player {
+public class RespondingPlayer implements EventListeningPlayer {
     private ReplyCreator replyCreator;
     private PackageTransport packageTransport;
     private boolean stopFlag = false;
     private String opponentName;
+    private Thread playersThread;
 
     public RespondingPlayer(ReplyCreator replyCreator,
                             PackageTransport packageTransport) {
@@ -23,7 +24,6 @@ public class RespondingPlayer implements Player {
 
     @Override
     public void setOpponentName(String opponentName) {
-
         this.opponentName = opponentName;
     }
 
@@ -34,16 +34,22 @@ public class RespondingPlayer implements Player {
 
     @Override
     public void run() {
+        playersThread = Thread.currentThread();
         while (!stopFlag) {
             Message message = receiveMessage();
-            Message reply = replyCreator.createReply(message);
-            send(reply);
+            if (message != null) {
+                Message reply = replyCreator.createReply(message);
+                send(reply);
+            }
         }
+        System.out.println("Player " + getName() + " stopped");
     }
 
     @Override
     public void stop() {
+        // need to add synchromization on 
         stopFlag = true;
+        playersThread.interrupt();
     }
 
     @Override
@@ -53,7 +59,8 @@ public class RespondingPlayer implements Player {
 
     @Override
     public Message receiveMessage() {
-        return packageTransport.receive(getName()).getMessage();
+        Package pack = packageTransport.receive(getName());
+        return pack != null? pack.getMessage() : null;
     }
 
     @Override
