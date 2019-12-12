@@ -10,40 +10,48 @@ import com.kabanov.messaging.event.EventTransport;
 import com.kabanov.messaging.event.ThreadsEventTransport;
 import com.kabanov.messaging.messages.IncrementingReplyCreator;
 import com.kabanov.messaging.messages.RandomMessageCreator;
+import com.kabanov.messaging.parcel.ThreadsParcelTransport;
 import com.kabanov.messaging.player.EventListeningPlayer;
 import com.kabanov.messaging.player.InitiatorPlayer;
 import com.kabanov.messaging.player.RespondingPlayer;
-import com.kabanov.messaging.transport.ThreadsPackageTransport;
 
 /**
  * @author Kabanov Alexey
  */
-public class Application {
+public class SingleJVMApplication {
 
     private static ExecutorService service = Executors.newFixedThreadPool(2 );
 
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        ThreadsPackageTransport threadsPackageTransport = new ThreadsPackageTransport();
+        // create transport
+        ThreadsParcelTransport threadsPackageTransport = new ThreadsParcelTransport();
         EventTransport eventTransport = new ThreadsEventTransport();
         
+        // create players
         EventListeningPlayer initiatorPlayer = new InitiatorPlayer(new RandomMessageCreator(), threadsPackageTransport);
         EventListeningPlayer respondingPlayer = new RespondingPlayer(new IncrementingReplyCreator(), threadsPackageTransport);
         
+        // initialize players
         initiatorPlayer.setOpponentName(respondingPlayer.getName());
         respondingPlayer.setOpponentName(initiatorPlayer.getName());
 
+        // subscribe players for events
         eventTransport.register(initiatorPlayer.getName(), initiatorPlayer);
         eventTransport.register(respondingPlayer.getName(), respondingPlayer);
         
-        Future<?> initiatorPlayerFuture = service.submit(initiatorPlayer::run);
-        service.submit(respondingPlayer::run);
+        // run two players simultaneously
+        Future<?> initiatorPlayerFuture = service.submit(initiatorPlayer::start);
+        service.submit(respondingPlayer::start);
 
+        // wait for initiator to complete 
         initiatorPlayerFuture.get();
 
+        // stopping players 
         eventTransport.sendEvent(respondingPlayer.getName(), Event.STOP);
-
+                           
+        // tear down: shutdown service
         service.shutdown();
     }
 }

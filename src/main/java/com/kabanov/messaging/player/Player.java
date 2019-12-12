@@ -11,7 +11,7 @@ public interface Player {
 
     String getName();
 
-    void run();
+    void start();
     
     void stop();
 

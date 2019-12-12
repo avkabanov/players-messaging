@@ -1,4 +1,4 @@
-package com.kabanov.messaging.transport;
+package com.kabanov.messaging.parcel;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,23 +9,23 @@ import javax.annotation.Nullable;
 /**
  * @author Kabanov Alexey
  */
-public class ThreadsPackageTransport implements PackageTransport {
+public class ThreadsParcelTransport implements ParcelTransport {
 
-    private ConcurrentHashMap<String, BlockingQueue<Package>> packages = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, BlockingQueue<Parcel>> parcelList = new ConcurrentHashMap<>();
     
     @Override
-    public void send(Package message) {
+    public void send(Parcel message) {
         System.out.println(
                 "Message sent for " + message.getReceiverName() + " with text: " + message.getMessage().getText());
-        packages.computeIfAbsent(message.getReceiverName(), (n) -> new LinkedBlockingQueue<>()).add(message);
+        parcelList.computeIfAbsent(message.getReceiverName(), (n) -> new LinkedBlockingQueue<>()).add(message);
     }
 
     @Nullable
     @Override
-    public Package receive(String recipient) {
-        Package poll = null;
+    public Parcel receive(String recipient) {
+        Parcel poll;
         try {
-            poll = packages.computeIfAbsent(recipient, (n) -> new LinkedBlockingQueue<>()).take();
+            poll = parcelList.computeIfAbsent(recipient, (n) -> new LinkedBlockingQueue<>()).take();
         } catch (InterruptedException e) {
             return null;
         }

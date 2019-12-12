@@ -3,8 +3,8 @@ package com.kabanov.messaging.player;
 import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.MessageCreator;
-import com.kabanov.messaging.transport.Package;
-import com.kabanov.messaging.transport.PackageTransport;
+import com.kabanov.messaging.parcel.Parcel;
+import com.kabanov.messaging.parcel.ParcelTransport;
 
 /**
  * @author Kabanov Alexey
@@ -12,13 +12,13 @@ import com.kabanov.messaging.transport.PackageTransport;
 public class InitiatorPlayer implements EventListeningPlayer {
 
     private MessageCreator messageCreator;
-    private PackageTransport packageTransport;
+    private ParcelTransport parcelTransport;
     private String opponentName;
 
     public InitiatorPlayer(MessageCreator messageCreator,
-                           PackageTransport packageTransport) {
+                           ParcelTransport parcelTransport) {
         this.messageCreator = messageCreator;
-        this.packageTransport = packageTransport;
+        this.parcelTransport = parcelTransport;
     }
 
     @Override
@@ -28,15 +28,16 @@ public class InitiatorPlayer implements EventListeningPlayer {
 
     @Override
     public String getName() {
-        return "Initiative_player";
+        return "Player1";
     }
 
     @Override
-    public void run() {
+    public void start() {
         for (int i = 0; i < 10; i++) {
             Message message = messageCreator.createMessage();
             send(message);
-            receiveMessage();
+            Message response = receiveMessage();
+            System.out.println(response);
         }
         System.out.println("Player " + getName() + " stopped");
     }
@@ -48,12 +49,12 @@ public class InitiatorPlayer implements EventListeningPlayer {
 
     @Override
     public void send(Message message) {
-        packageTransport.send(new Package(opponentName, message));
+        parcelTransport.send(new Parcel(opponentName, message));
     }
 
     @Override
     public Message receiveMessage() {
-        return packageTransport.receive(getName()).getMessage();
+        return parcelTransport.receive(getName()).getMessage();
     }
 
     @Override

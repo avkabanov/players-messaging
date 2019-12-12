@@ -3,23 +3,23 @@ package com.kabanov.messaging.player;
 import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.ReplyCreator;
-import com.kabanov.messaging.transport.Package;
-import com.kabanov.messaging.transport.PackageTransport;
+import com.kabanov.messaging.parcel.Parcel;
+import com.kabanov.messaging.parcel.ParcelTransport;
 
 /**
  * @author Kabanov Alexey
  */
 public class RespondingPlayer implements EventListeningPlayer {
     private ReplyCreator replyCreator;
-    private PackageTransport packageTransport;
-    private boolean stopFlag = false;
+    private ParcelTransport parcelTransport;
+    private volatile boolean stopFlag = false;
     private String opponentName;
     private Thread playersThread;
 
     public RespondingPlayer(ReplyCreator replyCreator,
-                            PackageTransport packageTransport) {
+                            ParcelTransport parcelTransport) {
         this.replyCreator = replyCreator;
-        this.packageTransport = packageTransport;
+        this.parcelTransport = parcelTransport;
     }
 
     @Override
@@ -29,11 +29,11 @@ public class RespondingPlayer implements EventListeningPlayer {
 
     @Override
     public String getName() {
-        return "Responding_player";
+        return "Player2";
     }
 
     @Override
-    public void run() {
+    public void start() {
         playersThread = Thread.currentThread();
         while (!stopFlag) {
             Message message = receiveMessage();
@@ -47,20 +47,21 @@ public class RespondingPlayer implements EventListeningPlayer {
 
     @Override
     public void stop() {
-        // need to add synchromization on 
         stopFlag = true;
-        playersThread.interrupt();
+        if (playersThread != null) {
+            playersThread.interrupt();
+        }
     }
 
     @Override
     public void send(Message message) {
-        packageTransport.send(new Package(opponentName, message));
+        parcelTransport.send(new Parcel(opponentName, message));
     }
 
     @Override
     public Message receiveMessage() {
-        Package pack = packageTransport.receive(getName());
-        return pack != null? pack.getMessage() : null;
+        Parcel pack = parcelTransport.receive(getName());
+        return pack != null ? pack.getMessage() : null;
     }
 
     @Override

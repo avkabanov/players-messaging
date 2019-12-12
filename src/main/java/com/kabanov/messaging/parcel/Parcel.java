@@ -1,4 +1,6 @@
-package com.kabanov.messaging.transport;
+package com.kabanov.messaging.parcel;
+
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
@@ -7,11 +9,11 @@ import com.kabanov.messaging.messages.Message;
 /**
  * @author Kabanov Alexey
  */
-public class Package {
+public class Parcel implements Serializable {
     private String receiverName;
     private Message message;
 
-    public Package(String receiverName, Message message) {
+    public Parcel(String receiverName, Message message) {
         this.receiverName = receiverName;
         this.message = message;
     }
