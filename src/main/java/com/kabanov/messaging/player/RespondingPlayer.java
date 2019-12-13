@@ -10,14 +10,15 @@ import com.kabanov.messaging.parcel.ParcelTransport;
  * @author Kabanov Alexey
  */
 public class RespondingPlayer implements EventListeningPlayer {
+    private String playerName;
     private ReplyCreator replyCreator;
     private ParcelTransport parcelTransport;
     private volatile boolean stopFlag = false;
     private String opponentName;
     private Thread playersThread;
 
-    public RespondingPlayer(ReplyCreator replyCreator,
-                            ParcelTransport parcelTransport) {
+    public RespondingPlayer(String playerName, ReplyCreator replyCreator, ParcelTransport parcelTransport) {
+        this.playerName = playerName;
         this.replyCreator = replyCreator;
         this.parcelTransport = parcelTransport;
     }
@@ -29,7 +30,7 @@ public class RespondingPlayer implements EventListeningPlayer {
 
     @Override
     public String getName() {
-        return "Player2";
+        return playerName;
     }
 
     @Override
@@ -40,6 +41,8 @@ public class RespondingPlayer implements EventListeningPlayer {
             if (message != null) {
                 Message reply = replyCreator.createReply(message);
                 send(reply);
+            } else {
+                stop();
             }
         }
         System.out.println("Player " + getName() + " stopped");

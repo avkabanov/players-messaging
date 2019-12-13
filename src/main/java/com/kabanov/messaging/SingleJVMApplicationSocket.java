@@ -8,66 +8,66 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.Future;
 
-import com.kabanov.messaging.event.Event;
-import com.kabanov.messaging.event.EventTransport;
-import com.kabanov.messaging.event.ThreadsEventTransport;
-import com.kabanov.messaging.messages.IncrementingReplyCreator;
-import com.kabanov.messaging.messages.RandomMessageCreator;
-import com.kabanov.messaging.parcel.SocketParcelTransport;
+import com.kabanov.messaging.creator.ObjectsFactory;
+import com.kabanov.messaging.creator.Profile;
+import com.kabanov.messaging.parcel.ParcelTransport;
 import com.kabanov.messaging.player.EventListeningPlayer;
-import com.kabanov.messaging.player.InitiatorPlayer;
-import com.kabanov.messaging.player.RespondingPlayer;
+import com.kabanov.messaging.properties.LocalPlayerProperties;
+import com.kabanov.messaging.properties.PlayersProperties;
 
 /**
  * @author Kabanov Alexey
  */
 public class SingleJVMApplicationSocket {
 
+    public static final Profile PROFILE = Profile.SOCKET_COMMUNICATION;
+
     private static ExecutorService service = Executors.newFixedThreadPool(2);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
 
+        String propertiesFile = args[0];
+
+        PlayersProperties playersProperties = PlayersProperties.loadFrom(propertiesFile);
+        ObjectsFactory objectsFactory = PROFILE.createObjectsFactory();
+
         // create transport
-        SocketParcelTransport packsTransport = new SocketParcelTransport();
-        EventTransport eventTransport = new ThreadsEventTransport();
+        ParcelTransport packsTransport = objectsFactory.getParcelTransport();
+        //EventTransport eventTransport = objectsFactory.createEventTransport();
 
-        // create players
-        EventListeningPlayer initiatorPlayer = new InitiatorPlayer(new RandomMessageCreator(), packsTransport);
-        EventListeningPlayer respondingPlayer = new RespondingPlayer(new IncrementingReplyCreator(), packsTransport);
+        LocalPlayerProperties localPlayerProperties = playersProperties.getLocalPlayerProperties();
+        EventListeningPlayer localPlayer = objectsFactory
+                .createPlayer(localPlayerProperties.getName(), localPlayerProperties.getPlayerType());
+        localPlayer.setOpponentName(localPlayerProperties.getOpponentName());
 
-        // initialize players
-        initiatorPlayer.setOpponentName(respondingPlayer.getName());
-        respondingPlayer.setOpponentName(initiatorPlayer.getName());
-
-        registerPlayers(packsTransport);
+        registerPlayers(packsTransport, playersProperties);
 
         // subscribe players for events
-        eventTransport.register(initiatorPlayer.getName(), initiatorPlayer);
-        eventTransport.register(respondingPlayer.getName(), respondingPlayer);
+        //eventTransport.register(initiatorPlayer.getName(), initiatorPlayer);
+        //eventTransport.register(respondingPlayer.getName(), respondingPlayer);
 
         // run two players simultaneously
-        Future<?> initiatorPlayerFuture = service.submit(initiatorPlayer::start);
-        service.submit(respondingPlayer::start);
+        //Future<?> initiatorPlayerFuture = service.submit(initiatorPlayer::start);
+        service.submit(localPlayer::start);
 
         // wait for initiator to complete 
-        initiatorPlayerFuture.get();
+        //initiatorPlayerFuture.get();
 
         // stopping players 
-        eventTransport.sendEvent(respondingPlayer.getName(), Event.STOP);
+        //eventTransport.sendEvent(respondingPlayer.getName(), Event.STOP);
 
         // tear down: shutdown service
         service.shutdown();
     }
 
-    private static void registerPlayers(SocketParcelTransport packsTransport) throws IOException, ExecutionException, InterruptedException {
+    private static void registerPlayers(ParcelTransport packsTransport,
+                                        PlayersProperties playersProperties) throws IOException, ExecutionException, InterruptedException {
         // player1 socket 
-        ForkJoinTask<Socket> future1 = ForkJoinPool.commonPool().submit(() -> {
+        ForkJoinTask<Socket> localPlayerFuture = ForkJoinPool.commonPool().submit(() -> {
             ServerSocket serverSocket = null;
             try {
-
-                serverSocket = new ServerSocket(4444);
+                serverSocket = new ServerSocket(playersProperties.getLocalPlayerProperties().getPort());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -75,47 +75,20 @@ public class SingleJVMApplicationSocket {
         });
 
         // player2 socket 
-        ForkJoinTask<Socket> future2 = ForkJoinPool.commonPool().submit(() -> createClient(4444));
+        ForkJoinTask<Socket> opponentFuture = ForkJoinPool.commonPool()
+                .submit(() -> createClient(playersProperties.getRemotePlayerProperties().getHost(),
+                        playersProperties.getRemotePlayerProperties().getPort()));
 
-        packsTransport.register("Player1", future1.get());
-        packsTransport.register("Player2", future2.get());
+        packsTransport.register(playersProperties.getLocalPlayerProperties().getName(), localPlayerFuture.get());
+        packsTransport.register(playersProperties.getRemotePlayerProperties().getName(), opponentFuture.get());
     }
 
-    private static void registerPlayer(SocketParcelTransport packsTransport,
-                                       EventListeningPlayer player, int port, String opponentName,
-                                       int opponentPort) throws IOException, ExecutionException, InterruptedException {
-        ServerSocket serverSocket = new ServerSocket(port);
-
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-
-        Future<?> future1 = executorService.submit(() -> {
-            try {
-                packsTransport.register(player.getName(), serverSocket.accept());
-                System.out.println("Registered");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        Future<?> future2 = executorService.submit(() -> {
-            try {
-                packsTransport.register(opponentName, createClient(opponentPort));
-                System.out.println("Client created");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        future1.get();
-        future2.get();
-
-    }
-
-    private static Socket createClient(int port) {
+    private static Socket createClient(String host, int port) {
         do {
             try {
-                Socket socket = new Socket("localhost", port);
-                return socket;
+                return new Socket(host, port);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Error creating socket: " + e.getMessage());
             }
         } while (true);
     }

@@ -13,11 +13,9 @@ import javax.annotation.Nullable;
  */
 public class SocketParcelTransport implements ParcelTransport {
 
-    // player 1 
-    // player 2
-
     private ConcurrentHashMap<String, SocketWraper> listeners = new ConcurrentHashMap<>();
 
+    @Override
     public void register(String name, Socket socket) throws IOException {
         if (listeners.putIfAbsent(name, new SocketWraper(socket)) == null) {
             System.out.println("Add " + socket + " for player " + name);    
@@ -45,7 +43,9 @@ public class SocketParcelTransport implements ParcelTransport {
             Parcel parcel = (Parcel) listeners.get(recipient).getInputStream().readObject();
             System.out.println("Message " + parcel.getMessage() + " received by " + recipient);;
             return parcel;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
+            // ignore. Just return null in case of io exception
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

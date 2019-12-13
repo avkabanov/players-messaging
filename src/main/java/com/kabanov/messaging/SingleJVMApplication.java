@@ -30,8 +30,8 @@ public class SingleJVMApplication {
         EventTransport eventTransport = new ThreadsEventTransport();
         
         // create players
-        EventListeningPlayer initiatorPlayer = new InitiatorPlayer(new RandomMessageCreator(), threadsPackageTransport);
-        EventListeningPlayer respondingPlayer = new RespondingPlayer(new IncrementingReplyCreator(), threadsPackageTransport);
+        EventListeningPlayer initiatorPlayer = new InitiatorPlayer("Player1", new RandomMessageCreator(), threadsPackageTransport);
+        EventListeningPlayer respondingPlayer = new RespondingPlayer("Player2", new IncrementingReplyCreator(), threadsPackageTransport);
         
         // initialize players
         initiatorPlayer.setOpponentName(respondingPlayer.getName());

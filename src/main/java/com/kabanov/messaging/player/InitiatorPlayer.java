@@ -11,12 +11,13 @@ import com.kabanov.messaging.parcel.ParcelTransport;
  */
 public class InitiatorPlayer implements EventListeningPlayer {
 
+    private String playerName;
     private MessageCreator messageCreator;
     private ParcelTransport parcelTransport;
     private String opponentName;
 
-    public InitiatorPlayer(MessageCreator messageCreator,
-                           ParcelTransport parcelTransport) {
+    public InitiatorPlayer(String playerName, MessageCreator messageCreator, ParcelTransport parcelTransport) {
+        this.playerName = playerName;
         this.messageCreator = messageCreator;
         this.parcelTransport = parcelTransport;
     }
@@ -28,7 +29,7 @@ public class InitiatorPlayer implements EventListeningPlayer {
 
     @Override
     public String getName() {
-        return "Player1";
+        return playerName;
     }
 
     @Override
@@ -36,8 +37,7 @@ public class InitiatorPlayer implements EventListeningPlayer {
         for (int i = 0; i < 10; i++) {
             Message message = messageCreator.createMessage();
             send(message);
-            Message response = receiveMessage();
-            System.out.println(response);
+            receiveMessage();
         }
         System.out.println("Player " + getName() + " stopped");
     }
