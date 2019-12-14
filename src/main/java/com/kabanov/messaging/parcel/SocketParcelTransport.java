@@ -15,11 +15,11 @@ import com.kabanov.messaging.transport.Parcel;
  */
 public class SocketParcelTransport implements ParcelTransport {
 
-    private ConcurrentHashMap<String, SocketWraper> listeners = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, SocketWrapper> listeners = new ConcurrentHashMap<>();
 
     public void register(String name, Socket socket) throws IOException {
-        if (listeners.putIfAbsent(name, new SocketWraper(socket)) == null) {
-            System.out.println("Registered player " + name + " with socket :" + socket);
+        if (listeners.putIfAbsent(name, new SocketWrapper(socket)) == null) {
+            System.out.println("Registered player " + name + " with socket: " + socket);
         }
     }
 
@@ -50,12 +50,12 @@ public class SocketParcelTransport implements ParcelTransport {
         return null;
     }
 
-    static class SocketWraper {
+    static class SocketWrapper {
         private ObjectOutputStream outputStream;
         private volatile ObjectInputStream inputStream;
         private Socket socket;
 
-        public SocketWraper(Socket socket) throws IOException {
+        public SocketWrapper(Socket socket) throws IOException {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.flush();
 
