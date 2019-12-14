@@ -3,8 +3,8 @@ package com.kabanov.messaging.player;
 import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.MessageCreator;
-import com.kabanov.messaging.parcel.Parcel;
 import com.kabanov.messaging.parcel.ParcelTransport;
+import com.kabanov.messaging.transport.Parcel;
 
 /**
  * @author Kabanov Alexey
@@ -16,17 +16,14 @@ public class InitiatorPlayer implements EventListeningPlayer {
     private ParcelTransport parcelTransport;
     private String opponentName;
 
-    public InitiatorPlayer(String playerName, MessageCreator messageCreator, ParcelTransport parcelTransport) {
+    public InitiatorPlayer(String playerName, String opponentName, MessageCreator messageCreator,
+                           ParcelTransport parcelTransport) {
         this.playerName = playerName;
+        this.opponentName = opponentName;
         this.messageCreator = messageCreator;
         this.parcelTransport = parcelTransport;
     }
-
-    @Override
-    public void setOpponentName(String opponentName) {
-        this.opponentName = opponentName;
-    }
-
+   
     @Override
     public String getName() {
         return playerName;
@@ -54,7 +51,7 @@ public class InitiatorPlayer implements EventListeningPlayer {
 
     @Override
     public Message receiveMessage() {
-        return parcelTransport.receive(getName()).getMessage();
+        return parcelTransport.receive(getName()).getBody();
     }
 
     @Override

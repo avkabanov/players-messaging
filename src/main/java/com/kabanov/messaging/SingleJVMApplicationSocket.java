@@ -9,9 +9,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 
-import com.kabanov.messaging.creator.ObjectsFactory;
-import com.kabanov.messaging.creator.Profile;
+import com.kabanov.messaging.di.Profile;
+import com.kabanov.messaging.di.factory.ObjectsFactory;
 import com.kabanov.messaging.parcel.ParcelTransport;
+import com.kabanov.messaging.parcel.SocketParcelTransport;
 import com.kabanov.messaging.player.EventListeningPlayer;
 import com.kabanov.messaging.properties.LocalPlayerProperties;
 import com.kabanov.messaging.properties.PlayersProperties;
@@ -37,11 +38,12 @@ public class SingleJVMApplicationSocket {
         //EventTransport eventTransport = objectsFactory.createEventTransport();
 
         LocalPlayerProperties localPlayerProperties = playersProperties.getLocalPlayerProperties();
-        EventListeningPlayer localPlayer = objectsFactory
-                .createPlayer(localPlayerProperties.getName(), localPlayerProperties.getPlayerType());
-        localPlayer.setOpponentName(localPlayerProperties.getOpponentName());
+        EventListeningPlayer localPlayer = objectsFactory.createPlayer(
+                localPlayerProperties.getName(),
+                localPlayerProperties.getOpponentName(),
+                localPlayerProperties.getPlayerType());
 
-        registerPlayers(packsTransport, playersProperties);
+        registerPlayers((SocketParcelTransport)packsTransport, playersProperties);
 
         // subscribe players for events
         //eventTransport.register(initiatorPlayer.getName(), initiatorPlayer);
@@ -61,7 +63,7 @@ public class SingleJVMApplicationSocket {
         service.shutdown();
     }
 
-    private static void registerPlayers(ParcelTransport packsTransport,
+    private static void registerPlayers(SocketParcelTransport packsTransport,
                                         PlayersProperties playersProperties) throws IOException, ExecutionException, InterruptedException {
         // player1 socket 
         ForkJoinTask<Socket> localPlayerFuture = ForkJoinPool.commonPool().submit(() -> {

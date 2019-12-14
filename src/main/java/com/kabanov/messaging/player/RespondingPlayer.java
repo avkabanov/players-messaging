@@ -3,8 +3,8 @@ package com.kabanov.messaging.player;
 import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.ReplyCreator;
-import com.kabanov.messaging.parcel.Parcel;
 import com.kabanov.messaging.parcel.ParcelTransport;
+import com.kabanov.messaging.transport.Parcel;
 
 /**
  * @author Kabanov Alexey
@@ -17,15 +17,12 @@ public class RespondingPlayer implements EventListeningPlayer {
     private String opponentName;
     private Thread playersThread;
 
-    public RespondingPlayer(String playerName, ReplyCreator replyCreator, ParcelTransport parcelTransport) {
+    public RespondingPlayer(String playerName, String opponentName, ReplyCreator replyCreator,
+                            ParcelTransport parcelTransport) {
         this.playerName = playerName;
+        this.opponentName = opponentName;
         this.replyCreator = replyCreator;
         this.parcelTransport = parcelTransport;
-    }
-
-    @Override
-    public void setOpponentName(String opponentName) {
-        this.opponentName = opponentName;
     }
 
     @Override
@@ -42,7 +39,7 @@ public class RespondingPlayer implements EventListeningPlayer {
                 Message reply = replyCreator.createReply(message);
                 send(reply);
             } else {
-                stop();
+                System.out.println("Message is not received. Retrying...");
             }
         }
         System.out.println("Player " + getName() + " stopped");
@@ -64,7 +61,7 @@ public class RespondingPlayer implements EventListeningPlayer {
     @Override
     public Message receiveMessage() {
         Parcel pack = parcelTransport.receive(getName());
-        return pack != null ? pack.getMessage() : null;
+        return pack != null ? pack.getBody() : null;
     }
 
     @Override

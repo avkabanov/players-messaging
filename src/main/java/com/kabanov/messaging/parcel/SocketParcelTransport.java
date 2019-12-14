@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
+import com.kabanov.messaging.transport.Parcel;
+
 /**
  * @author Kabanov Alexey
  */
@@ -15,12 +17,9 @@ public class SocketParcelTransport implements ParcelTransport {
 
     private ConcurrentHashMap<String, SocketWraper> listeners = new ConcurrentHashMap<>();
 
-    @Override
     public void register(String name, Socket socket) throws IOException {
         if (listeners.putIfAbsent(name, new SocketWraper(socket)) == null) {
-            System.out.println("Add " + socket + " for player " + name);    
-        } else {
-            System.out.println("Ignored " + socket + " for player " + name);
+            System.out.println("Registered player " + name + " with socket :" + socket);
         }
     }
 
@@ -30,7 +29,7 @@ public class SocketParcelTransport implements ParcelTransport {
             listeners.get(message.getReceiverName()).getOutputStream().writeObject(message);
             listeners.get(message.getReceiverName()).getOutputStream().flush();
 
-            System.out.println("Message " + message.getMessage() + " sent to " + message.getReceiverName());
+            System.out.println("Message " + message.getBody() + " sent to " + message.getReceiverName());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,7 +40,7 @@ public class SocketParcelTransport implements ParcelTransport {
     public Parcel receive(String recipient) {
         try {
             Parcel parcel = (Parcel) listeners.get(recipient).getInputStream().readObject();
-            System.out.println("Message " + parcel.getMessage() + " received by " + recipient);;
+            System.out.println("Message " + parcel.getBody() + " received by " + recipient);
             return parcel;
         } catch (IOException e) {
             // ignore. Just return null in case of io exception
@@ -51,7 +50,7 @@ public class SocketParcelTransport implements ParcelTransport {
         return null;
     }
 
-    class SocketWraper {
+    static class SocketWraper {
         private ObjectOutputStream outputStream;
         private volatile ObjectInputStream inputStream;
         private Socket socket;
@@ -59,7 +58,7 @@ public class SocketParcelTransport implements ParcelTransport {
         public SocketWraper(Socket socket) throws IOException {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.flush();
-            
+
             this.socket = socket;
         }
 
@@ -72,9 +71,10 @@ public class SocketParcelTransport implements ParcelTransport {
         }
 
         /**
-         * if we run sender and receiver in a single JVM - we may get blocked on ObjectInputStream constructor. 
-         * That is why we can not instantiate in SocketWrapper constructor, but need to make lazy initialization 
-         * using double checked locking.
+         * if we run sender and receiver in a single JVM - we may get blocked on ObjectInputStream constructor. That is
+         * why we can not instantiate in SocketWrapper constructor, but need to make lazy initialization using double
+         * checked locking.
+         *
          * @return
          * @throws IOException
          */
@@ -83,7 +83,7 @@ public class SocketParcelTransport implements ParcelTransport {
             if (inputStream == null) {
                 synchronized (this) {
                     if (inputStream == null) {
-                        inputStream = new ObjectInputStream(socket.getInputStream());            
+                        inputStream = new ObjectInputStream(socket.getInputStream());
                     }
                 }
             }

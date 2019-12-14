@@ -1,4 +1,8 @@
-package com.kabanov.messaging.creator;
+package com.kabanov.messaging.di;
+
+import com.kabanov.messaging.di.factory.ObjectsFactory;
+import com.kabanov.messaging.di.factory.SocketObjectsFactory;
+import com.kabanov.messaging.di.factory.ThreadObjectsFactory;
 
 /**
  * @author Kabanov Alexey

@@ -1,30 +1,25 @@
 package com.kabanov.messaging.parcel;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.annotation.Nullable;
 
+import com.kabanov.messaging.transport.Parcel;
+
 /**
  * @author Kabanov Alexey
  */
-public class ThreadsParcelTransport implements ParcelTransport {
+public class InMemoryParcelTransport implements ParcelTransport {
 
     private ConcurrentHashMap<String, BlockingQueue<Parcel>> parcelList = new ConcurrentHashMap<>();
-
+    
     @Override
-    public void register(String name, Socket socket) throws IOException {
-        
-    }
-
-    @Override
-    public void send(Parcel message) {
+    public void send(Parcel parcel) {
         System.out.println(
-                "Message sent for " + message.getReceiverName() + " with text: " + message.getMessage().getText());
-        parcelList.computeIfAbsent(message.getReceiverName(), (n) -> new LinkedBlockingQueue<>()).add(message);
+                "Message sent for " + parcel.getReceiverName() + " with text: " + parcel.getBody().getText());
+        parcelList.computeIfAbsent(parcel.getReceiverName(), (n) -> new LinkedBlockingQueue<>()).add(parcel);
     }
 
     @Nullable
@@ -36,7 +31,7 @@ public class ThreadsParcelTransport implements ParcelTransport {
         } catch (InterruptedException e) {
             return null;
         }
-        System.out.println("Message received by " + recipient + " with text: " + poll.getMessage().getText());
+        System.out.println("Message received by " + recipient + " with text: " + poll.getBody().getText());
         return poll;
     }
 }

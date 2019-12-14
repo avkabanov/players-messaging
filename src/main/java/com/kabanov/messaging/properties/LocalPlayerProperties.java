@@ -2,7 +2,7 @@ package com.kabanov.messaging.properties;
 
 import java.util.Properties;
 
-import com.kabanov.messaging.creator.PlayerType;
+import com.kabanov.messaging.di.PlayerType;
 
 /**
  * @author Kabanov Alexey

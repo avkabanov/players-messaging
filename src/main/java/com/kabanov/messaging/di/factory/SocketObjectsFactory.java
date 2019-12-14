@@ -1,4 +1,4 @@
-package com.kabanov.messaging.creator;
+package com.kabanov.messaging.di.factory;
 
 import com.kabanov.messaging.event.EventTransport;
 import com.kabanov.messaging.event.ThreadsEventTransport;
@@ -18,7 +18,7 @@ public class SocketObjectsFactory extends BaseObjectsFactory implements ObjectsF
     }
 
     @Override
-    public EventTransport createEventTransport() {
+    public EventTransport getEventTransport() {
         return new ThreadsEventTransport();
     }
 }

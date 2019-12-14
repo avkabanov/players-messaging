@@ -1,16 +1,13 @@
 package com.kabanov.messaging.parcel;
 
-import java.io.IOException;
-import java.net.Socket;
-
 import javax.annotation.Nullable;
+
+import com.kabanov.messaging.transport.Parcel;
 
 /**
  * @author Kabanov Alexey
  */
 public interface ParcelTransport {
-
-    void register(String name, Socket socket) throws IOException;
 
     void send(Parcel message);
 

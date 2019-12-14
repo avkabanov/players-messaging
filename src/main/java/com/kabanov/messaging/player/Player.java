@@ -7,8 +7,6 @@ import com.kabanov.messaging.messages.Message;
  */
 public interface Player {
 
-    void setOpponentName(String opponentName);
-
     String getName();
 
     void start();
