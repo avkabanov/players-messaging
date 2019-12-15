@@ -7,6 +7,8 @@ transferred using inMemory message queue or using socket.
 ## Structure Overview
 
 ### Players
+// TODO add
+
 ### Transport
 #### Data
 `com.kabanov.messaging.transport.data.Parcel` is the data type that can be transferred using any of the transport implementation.
@@ -46,6 +48,7 @@ There are two entry point with `public static void main()` method:
  twice - for each player. With corresponding properties for each player
  
  ### Run Example
+ // TODO add
 
 
 
