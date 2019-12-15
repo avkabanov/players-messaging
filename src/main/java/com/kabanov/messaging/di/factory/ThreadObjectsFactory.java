@@ -1,6 +1,5 @@
 package com.kabanov.messaging.di.factory;
 
-import com.kabanov.messaging.event.EventTransport;
 import com.kabanov.messaging.parcel.InMemoryParcelTransport;
 import com.kabanov.messaging.parcel.ParcelTransport;
 
@@ -14,10 +13,5 @@ public class ThreadObjectsFactory extends BaseObjectsFactory implements ObjectsF
     @Override
     public ParcelTransport getParcelTransport() {
         return parcelTransport;
-    }
-
-    @Override
-    public EventTransport getEventTransport() {
-        return null;
     }
 }

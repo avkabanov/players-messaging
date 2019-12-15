@@ -1,6 +1,5 @@
 package com.kabanov.messaging.player;
 
-import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.MessageCreator;
 import com.kabanov.messaging.parcel.ParcelTransport;
@@ -9,12 +8,14 @@ import com.kabanov.messaging.transport.Parcel;
 /**
  * @author Kabanov Alexey
  */
-public class InitiatorPlayer implements EventListeningPlayer {
+public class InitiatorPlayer implements Player {
 
     private String playerName;
     private MessageCreator messageCreator;
     private ParcelTransport parcelTransport;
     private String opponentName;
+    private volatile boolean stopFlag;
+    private Thread playersThread;
 
     public InitiatorPlayer(String playerName, String opponentName, MessageCreator messageCreator,
                            ParcelTransport parcelTransport) {
@@ -31,7 +32,9 @@ public class InitiatorPlayer implements EventListeningPlayer {
 
     @Override
     public void start() {
-        for (int i = 0; i < 10; i++) {
+        playersThread = Thread.currentThread();
+        
+        for (int i = 0; i < 10 && !stopFlag; i++) {
             Message message = messageCreator.createMessage();
             send(message);
             receiveMessage();
@@ -41,7 +44,10 @@ public class InitiatorPlayer implements EventListeningPlayer {
 
     @Override
     public void stop() {
-        // TODO fix stop method
+        stopFlag = true;
+        if (playersThread != null) {
+            playersThread.interrupt();
+        }
     }
 
     @Override
@@ -52,14 +58,5 @@ public class InitiatorPlayer implements EventListeningPlayer {
     @Override
     public Message receiveMessage() {
         return parcelTransport.receive(getName()).getBody();
-    }
-
-    @Override
-    public void onEventReceived(Event event) {
-        switch (event) {
-            case STOP:
-                stop();
-                break;
-        }    
     }
 }

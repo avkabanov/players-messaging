@@ -1,9 +1,8 @@
 package com.kabanov.messaging.di.factory;
 
 import com.kabanov.messaging.di.PlayerType;
-import com.kabanov.messaging.event.EventTransport;
 import com.kabanov.messaging.parcel.ParcelTransport;
-import com.kabanov.messaging.player.EventListeningPlayer;
+import com.kabanov.messaging.player.Player;
 
 /**
  * @author Kabanov Alexey
@@ -11,7 +10,5 @@ import com.kabanov.messaging.player.EventListeningPlayer;
 public interface ObjectsFactory {
     ParcelTransport getParcelTransport();
 
-    EventTransport getEventTransport();
-
-    EventListeningPlayer createPlayer(String playerName, String opponentName, PlayerType playerType);
+    Player createPlayer(String playerName, String opponentName, PlayerType playerType);
 }

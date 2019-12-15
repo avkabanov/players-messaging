@@ -13,51 +13,40 @@ import com.kabanov.messaging.di.Profile;
 import com.kabanov.messaging.di.factory.ObjectsFactory;
 import com.kabanov.messaging.parcel.ParcelTransport;
 import com.kabanov.messaging.parcel.SocketParcelTransport;
-import com.kabanov.messaging.player.EventListeningPlayer;
+import com.kabanov.messaging.player.Player;
 import com.kabanov.messaging.properties.LocalPlayerProperties;
 import com.kabanov.messaging.properties.PlayersProperties;
 
 /**
  * @author Kabanov Alexey
  */
-public class SingleJVMApplicationSocket {
+// TODO add logger
+public class MultipleJVMApplication {
 
     public static final Profile PROFILE = Profile.SOCKET_COMMUNICATION;
-
+    private ObjectsFactory objectsFactory = PROFILE.createObjectsFactory();
+    
     private static ExecutorService service = Executors.newFixedThreadPool(2);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
+        new MultipleJVMApplication().run(args[0]);
+    }
 
-        String propertiesFile = args[0];
-
+    private void run(String propertiesFile) throws IOException, ExecutionException, InterruptedException {
         PlayersProperties playersProperties = PlayersProperties.loadFrom(propertiesFile);
-        ObjectsFactory objectsFactory = PROFILE.createObjectsFactory();
 
         // create transport
         ParcelTransport packsTransport = objectsFactory.getParcelTransport();
-        //EventTransport eventTransport = objectsFactory.createEventTransport();
 
         LocalPlayerProperties localPlayerProperties = playersProperties.getLocalPlayerProperties();
-        EventListeningPlayer localPlayer = objectsFactory.createPlayer(
+        Player localPlayer = objectsFactory.createPlayer(
                 localPlayerProperties.getName(),
                 localPlayerProperties.getOpponentName(),
                 localPlayerProperties.getPlayerType());
 
         registerPlayers((SocketParcelTransport)packsTransport, playersProperties);
 
-        // subscribe players for events
-        //eventTransport.register(initiatorPlayer.getName(), initiatorPlayer);
-        //eventTransport.register(respondingPlayer.getName(), respondingPlayer);
-
-        // run two players simultaneously
-        //Future<?> initiatorPlayerFuture = service.submit(initiatorPlayer::start);
         service.submit(localPlayer::start);
-
-        // wait for initiator to complete 
-        //initiatorPlayerFuture.get();
-
-        // stopping players 
-        //eventTransport.sendEvent(respondingPlayer.getName(), Event.STOP);
 
         // tear down: shutdown service
         service.shutdown();

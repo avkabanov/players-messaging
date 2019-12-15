@@ -1,6 +1,5 @@
 package com.kabanov.messaging.player;
 
-import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.ReplyCreator;
 import com.kabanov.messaging.parcel.ParcelTransport;
@@ -9,7 +8,7 @@ import com.kabanov.messaging.transport.Parcel;
 /**
  * @author Kabanov Alexey
  */
-public class RespondingPlayer implements EventListeningPlayer {
+public class RespondingPlayer implements Player {
     private String playerName;
     private ReplyCreator replyCreator;
     private ParcelTransport parcelTransport;
@@ -39,7 +38,8 @@ public class RespondingPlayer implements EventListeningPlayer {
                 Message reply = replyCreator.createReply(message);
                 send(reply);
             } else {
-                System.out.println("Message is not received. Retrying...");
+                System.out.println("stopping");
+                stop();
             }
         }
         System.out.println("Player " + getName() + " stopped");
@@ -62,14 +62,5 @@ public class RespondingPlayer implements EventListeningPlayer {
     public Message receiveMessage() {
         Parcel pack = parcelTransport.receive(getName());
         return pack != null ? pack.getBody() : null;
-    }
-
-    @Override
-    public void onEventReceived(Event event) {
-        switch (event) {
-            case STOP:
-                stop();
-                break;
-        }
     }
 }
