@@ -1,7 +1,7 @@
 package com.kabanov.messaging.di.factory;
 
-import com.kabanov.messaging.parcel.InMemoryParcelTransport;
-import com.kabanov.messaging.parcel.ParcelTransport;
+import com.kabanov.messaging.transport.InMemoryParcelTransport;
+import com.kabanov.messaging.transport.ParcelTransport;
 
 /**
  * @author Kabanov Alexey

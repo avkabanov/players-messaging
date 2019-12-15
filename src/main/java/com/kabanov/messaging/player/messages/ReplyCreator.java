@@ -1,4 +1,4 @@
-package com.kabanov.messaging.messages;
+package com.kabanov.messaging.player.messages;
 
 /**
  * @author Kabanov Alexey

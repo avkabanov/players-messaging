@@ -1,8 +1,8 @@
-package com.kabanov.messaging.parcel;
+package com.kabanov.messaging.transport;
 
 import javax.annotation.Nullable;
 
-import com.kabanov.messaging.transport.Parcel;
+import com.kabanov.messaging.transport.data.Parcel;
 
 /**
  * @author Kabanov Alexey

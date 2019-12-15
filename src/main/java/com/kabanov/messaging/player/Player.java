@@ -1,6 +1,6 @@
 package com.kabanov.messaging.player;
 
-import com.kabanov.messaging.messages.Message;
+import com.kabanov.messaging.player.messages.Message;
 
 /**
  * @author Kabanov Alexey

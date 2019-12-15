@@ -1,11 +1,11 @@
 package com.kabanov.messaging.di.factory;
 
 import com.kabanov.messaging.di.PlayerType;
-import com.kabanov.messaging.messages.IncrementingReplyCreator;
-import com.kabanov.messaging.messages.RandomMessageCreator;
 import com.kabanov.messaging.player.InitiatorPlayer;
 import com.kabanov.messaging.player.Player;
 import com.kabanov.messaging.player.RespondingPlayer;
+import com.kabanov.messaging.player.messages.IncrementingReplyCreator;
+import com.kabanov.messaging.player.messages.RandomMessageCreator;
 
 /**
  * @author Kabanov Alexey

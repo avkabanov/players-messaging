@@ -1,4 +1,4 @@
-package com.kabanov.messaging.transport;
+package com.kabanov.messaging.transport.data;
 
 import java.io.Serializable;
 

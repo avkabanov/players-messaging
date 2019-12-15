@@ -1,8 +1,8 @@
-package com.kabanov.messaging.transport;
+package com.kabanov.messaging.transport.data;
 
 import javax.annotation.Nonnull;
 
-import com.kabanov.messaging.messages.Message;
+import com.kabanov.messaging.player.messages.Message;
 
 /**
  * @author Kabanov Alexey

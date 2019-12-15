@@ -10,11 +10,11 @@ import com.kabanov.messaging.connection.ClientServerSocket;
 import com.kabanov.messaging.connection.SocketConnector;
 import com.kabanov.messaging.di.Profile;
 import com.kabanov.messaging.di.factory.ObjectsFactory;
-import com.kabanov.messaging.parcel.ParcelTransport;
-import com.kabanov.messaging.parcel.SocketParcelTransport;
 import com.kabanov.messaging.player.Player;
 import com.kabanov.messaging.properties.LocalPlayerProperties;
 import com.kabanov.messaging.properties.PlayersProperties;
+import com.kabanov.messaging.transport.ParcelTransport;
+import com.kabanov.messaging.transport.SocketParcelTransport;
 
 /**
  * @author Kabanov Alexey

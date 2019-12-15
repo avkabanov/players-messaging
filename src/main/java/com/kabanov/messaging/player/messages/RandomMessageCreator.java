@@ -1,4 +1,4 @@
-package com.kabanov.messaging.messages;
+package com.kabanov.messaging.player.messages;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
