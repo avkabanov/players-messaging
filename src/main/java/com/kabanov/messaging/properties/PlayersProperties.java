@@ -31,4 +31,5 @@ public class PlayersProperties {
     public RemotePlayerProperties getRemotePlayerProperties() {
         return remotePlayerProperties;
     }
+    
 }

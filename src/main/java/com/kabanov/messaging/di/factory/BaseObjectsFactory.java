@@ -25,10 +25,12 @@ public abstract class BaseObjectsFactory implements ObjectsFactory {
     }
 
     public EventListeningPlayer createInitiatorPlayer(String playerName, String opponentName) {
-        return new InitiatorPlayer(playerName, opponentName, new RandomMessageCreator(), getParcelTransport());
+        // TODO refactor generics
+        return new InitiatorPlayer(playerName, opponentName, new RandomMessageCreator(), getTransport());
     }
 
     public EventListeningPlayer createRespondingPlayer(String playerName, String opponentName) {
-        return new RespondingPlayer(playerName, opponentName, new IncrementingReplyCreator(), getParcelTransport());
+        // TODO refactor generics
+        return new RespondingPlayer(playerName, opponentName, new IncrementingReplyCreator(), getTransport());
     }
 }

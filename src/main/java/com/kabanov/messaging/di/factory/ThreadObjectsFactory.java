@@ -1,19 +1,19 @@
 package com.kabanov.messaging.di.factory;
 
 import com.kabanov.messaging.event.EventTransport;
-import com.kabanov.messaging.parcel.InMemoryParcelTransport;
-import com.kabanov.messaging.parcel.ParcelTransport;
+import com.kabanov.messaging.transport.InMemoryTransport;
+import com.kabanov.messaging.transport.Transport;
 
 /**
  * @author Kabanov Alexey
  */
 public class ThreadObjectsFactory extends BaseObjectsFactory implements ObjectsFactory {
 
-    private ParcelTransport parcelTransport = new InMemoryParcelTransport();
+    private Transport transport = new InMemoryTransport();
 
     @Override
-    public ParcelTransport getParcelTransport() {
-        return parcelTransport;
+    public Transport getTransport() {
+        return transport;
     }
 
     @Override
