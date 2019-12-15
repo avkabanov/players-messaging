@@ -1,5 +1,8 @@
 package com.kabanov.messaging.player;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.ReplyCreator;
 import com.kabanov.messaging.parcel.ParcelTransport;
@@ -9,6 +12,9 @@ import com.kabanov.messaging.transport.Parcel;
  * @author Kabanov Alexey
  */
 public class RespondingPlayer implements Player {
+
+    private static final Logger logger = LoggerFactory.getLogger(InitiatorPlayer.class);
+    
     private String playerName;
     private ReplyCreator replyCreator;
     private ParcelTransport parcelTransport;
@@ -38,15 +44,15 @@ public class RespondingPlayer implements Player {
                 Message reply = replyCreator.createReply(message);
                 send(reply);
             } else {
-                System.out.println("stopping");
                 stop();
             }
         }
-        System.out.println("Player " + getName() + " stopped");
+        logger.info("Player " + getName() + " stopped");
     }
 
     @Override
     public void stop() {
+        logger.info("Stopping player " + getName());
         stopFlag = true;
         if (playersThread != null) {
             playersThread.interrupt();

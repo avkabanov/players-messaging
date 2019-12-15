@@ -8,6 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.kabanov.messaging.transport.Parcel;
 
 /**
@@ -15,11 +18,13 @@ import com.kabanov.messaging.transport.Parcel;
  */
 public class SocketParcelTransport implements ParcelTransport {
 
+    private static final Logger logger = LoggerFactory.getLogger(SocketParcelTransport.class);
+
     private ConcurrentHashMap<String, SocketWrapper> listeners = new ConcurrentHashMap<>();
 
     public void register(String name, Socket socket) throws IOException {
         if (listeners.putIfAbsent(name, new SocketWrapper(socket)) == null) {
-            System.out.println("Registered player " + name + " with socket: " + socket);
+            logger.info("Registered player " + name + " with socket: " + socket);
         }
     }
 
@@ -29,7 +34,7 @@ public class SocketParcelTransport implements ParcelTransport {
             listeners.get(message.getReceiverName()).getOutputStream().writeObject(message);
             listeners.get(message.getReceiverName()).getOutputStream().flush();
 
-            System.out.println("Message " + message.getBody() + " sent to " + message.getReceiverName());
+            logger.info("Message " + message.getBody() + " sent to " + message.getReceiverName());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,7 +45,7 @@ public class SocketParcelTransport implements ParcelTransport {
     public Parcel receive(String recipient) {
         try {
             Parcel parcel = (Parcel) listeners.get(recipient).getInputStream().readObject();
-            System.out.println("Message " + parcel.getBody() + " received by " + recipient);
+            logger.info("Message " + parcel.getBody() + " received by " + recipient);
             return parcel;
         } catch (IOException e) {
             // ignore. Just return null in case of io exception
@@ -62,23 +67,11 @@ public class SocketParcelTransport implements ParcelTransport {
             this.socket = socket;
         }
 
-        public Socket getSocket() {
-            return socket;
-        }
-
-        public void setSocket(Socket socket) {
-            this.socket = socket;
-        }
-
         /**
          * if we run sender and receiver in a single JVM - we may get blocked on ObjectInputStream constructor. That is
          * why we can not instantiate in SocketWrapper constructor, but need to make lazy initialization using double
          * checked locking.
-         *
-         * @return
-         * @throws IOException
          */
-        // todo maybe remove that??
         public ObjectInputStream getInputStream() throws IOException {
             if (inputStream == null) {
                 synchronized (this) {

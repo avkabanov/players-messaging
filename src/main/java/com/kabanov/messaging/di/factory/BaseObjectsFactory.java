@@ -11,7 +11,7 @@ import com.kabanov.messaging.player.RespondingPlayer;
  * @author Kabanov Alexey
  */
 public abstract class BaseObjectsFactory implements ObjectsFactory {
-
+    
     @Override
     public Player createPlayer(String playerName, String opponentName, PlayerType playerType) {
         switch (playerType) {
