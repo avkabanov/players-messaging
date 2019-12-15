@@ -1,6 +1,5 @@
 package com.kabanov.messaging.properties;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -9,13 +8,12 @@ import java.util.Properties;
  */
 public class PlayersProperties {
 
-    private Properties properties = new Properties();
     private LocalPlayerProperties localPlayerProperties;
     private RemotePlayerProperties remotePlayerProperties;
 
     private PlayersProperties(String fileName) throws IOException {
-        String path = Thread.currentThread().getContextClassLoader().getResource(fileName).getPath();
-        properties.load(new FileReader(path));    
+        Properties properties = PropertiesLoader.loadFromResource(fileName);
+        
         localPlayerProperties = new LocalPlayerProperties(properties);
         remotePlayerProperties = new RemotePlayerProperties(properties);
     }
