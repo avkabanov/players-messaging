@@ -1,26 +1,24 @@
 package com.kabanov.messaging.di.factory;
 
 import com.kabanov.messaging.event.EventTransport;
-import com.kabanov.messaging.event.SocketEventTransport;
-import com.kabanov.messaging.transport.SocketTransport;
-import com.kabanov.messaging.transport.Transport;
+import com.kabanov.messaging.event.ThreadsEventTransport;
+import com.kabanov.messaging.parcel.ParcelTransport;
+import com.kabanov.messaging.parcel.SocketParcelTransport;
 
 /**
  * @author Kabanov Alexey
  */
 public class SocketObjectsFactory extends BaseObjectsFactory implements ObjectsFactory {
 
-    private Transport socketTransport = new SocketTransport();
+    private ParcelTransport socketParcelTransport = new SocketParcelTransport();
 
-    private EventTransport eventTransport = new SocketEventTransport();
-    
     @Override
-    public Transport getTransport() {
-        return socketTransport;
+    public ParcelTransport getParcelTransport() {
+        return socketParcelTransport;
     }
 
     @Override
     public EventTransport getEventTransport() {
-        return eventTransport;
+        return new ThreadsEventTransport();
     }
 }

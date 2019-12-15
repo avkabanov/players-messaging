@@ -3,8 +3,8 @@ package com.kabanov.messaging.player;
 import com.kabanov.messaging.event.Event;
 import com.kabanov.messaging.messages.Message;
 import com.kabanov.messaging.messages.ReplyCreator;
+import com.kabanov.messaging.parcel.ParcelTransport;
 import com.kabanov.messaging.transport.Parcel;
-import com.kabanov.messaging.transport.Transport;
 
 /**
  * @author Kabanov Alexey
@@ -12,17 +12,17 @@ import com.kabanov.messaging.transport.Transport;
 public class RespondingPlayer implements EventListeningPlayer {
     private String playerName;
     private ReplyCreator replyCreator;
-    private Transport<Parcel<Message>, Message> transport;
+    private ParcelTransport parcelTransport;
     private volatile boolean stopFlag = false;
     private String opponentName;
     private Thread playersThread;
 
     public RespondingPlayer(String playerName, String opponentName, ReplyCreator replyCreator,
-                            Transport<Parcel<Message>, Message> transport) {
+                            ParcelTransport parcelTransport) {
         this.playerName = playerName;
         this.opponentName = opponentName;
         this.replyCreator = replyCreator;
-        this.transport = transport;
+        this.parcelTransport = parcelTransport;
     }
 
     @Override
@@ -55,12 +55,12 @@ public class RespondingPlayer implements EventListeningPlayer {
 
     @Override
     public void send(Message message) {
-        transport.send(new Parcel<>(opponentName, message));
+        parcelTransport.send(new Parcel(opponentName, message));
     }
 
     @Override
     public Message receiveMessage() {
-        Parcel<Message> pack = transport.receive(getName());
+        Parcel pack = parcelTransport.receive(getName());
         return pack != null ? pack.getBody() : null;
     }
 

@@ -1,4 +1,4 @@
-package com.kabanov.messaging.transport;
+package com.kabanov.messaging.parcel;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,10 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
+import com.kabanov.messaging.transport.Parcel;
+
 /**
  * @author Kabanov Alexey
  */
-public class SocketTransport<D> implements Transport<Parcel<D>, D> {
+public class SocketParcelTransport implements ParcelTransport {
 
     private ConcurrentHashMap<String, SocketWrapper> listeners = new ConcurrentHashMap<>();
 
@@ -22,7 +24,7 @@ public class SocketTransport<D> implements Transport<Parcel<D>, D> {
     }
 
     @Override
-    public void send(Parcel<D> message) {
+    public void send(Parcel message) {
         try {
             listeners.get(message.getReceiverName()).getOutputStream().writeObject(message);
             listeners.get(message.getReceiverName()).getOutputStream().flush();
@@ -35,9 +37,9 @@ public class SocketTransport<D> implements Transport<Parcel<D>, D> {
 
     @Nullable
     @Override
-    public Parcel<D> receive(String recipient) {
+    public Parcel receive(String recipient) {
         try {
-            Parcel<D> parcel = (Parcel) listeners.get(recipient).getInputStream().readObject();
+            Parcel parcel = (Parcel) listeners.get(recipient).getInputStream().readObject();
             System.out.println("Message " + parcel.getBody() + " received by " + recipient);
             return parcel;
         } catch (IOException e) {
@@ -56,6 +58,15 @@ public class SocketTransport<D> implements Transport<Parcel<D>, D> {
         public SocketWrapper(Socket socket) throws IOException {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.flush();
+
+            this.socket = socket;
+        }
+
+        public Socket getSocket() {
+            return socket;
+        }
+
+        public void setSocket(Socket socket) {
             this.socket = socket;
         }
 
@@ -63,7 +74,11 @@ public class SocketTransport<D> implements Transport<Parcel<D>, D> {
          * if we run sender and receiver in a single JVM - we may get blocked on ObjectInputStream constructor. That is
          * why we can not instantiate in SocketWrapper constructor, but need to make lazy initialization using double
          * checked locking.
+         *
+         * @return
+         * @throws IOException
          */
+        // todo maybe remove that??
         public ObjectInputStream getInputStream() throws IOException {
             if (inputStream == null) {
                 synchronized (this) {

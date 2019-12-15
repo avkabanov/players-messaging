@@ -2,16 +2,18 @@ package com.kabanov.messaging.transport;
 
 import javax.annotation.Nonnull;
 
+import com.kabanov.messaging.messages.Message;
+
 /**
  * @author Kabanov Alexey
  */
-public class Parcel<T> implements Transferable<T> {
+public class Parcel implements Transferable<Message> {
     private String receiverName;
-    private T body;
+    private Message message;
 
-    public Parcel(String receiverName, T body) {
+    public Parcel(String receiverName, Message message) {
         this.receiverName = receiverName;
-        this.body = body;
+        this.message = message;
     }
 
     @Override
@@ -21,7 +23,7 @@ public class Parcel<T> implements Transferable<T> {
 
     @Override
     @Nonnull
-    public T getBody() {
-        return body;
+    public Message getBody() {
+        return message;
     }
 }
