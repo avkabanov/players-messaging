@@ -5,9 +5,10 @@ In this solution communication between two players is implemented. Messages can 
 transferred using inMemory message queue or using socket.   
 
 ## Structure Overview
-
 ### Players
-// TODO add
+*Strategy pattern* has been used in players implementation. Behavior of each player has been encapsulated into 
+more specific class: `com.kabanov.messaging.player.behavior.InitiativeBehavior` and 
+`com.kabanov.messaging.player.behavior.RecipientBehavior`
 
 ### Transport
 #### Data

@@ -5,6 +5,9 @@ package com.kabanov.messaging.player.behavior;
  */
 public interface Behavior {
 
+    /**
+     * invoke behavior until stop method will be invoked
+     */
     void invoke();
 
     void stop();
