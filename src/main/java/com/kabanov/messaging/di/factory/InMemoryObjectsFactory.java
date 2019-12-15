@@ -6,7 +6,7 @@ import com.kabanov.messaging.transport.ParcelTransport;
 /**
  * @author Kabanov Alexey
  */
-public class ThreadObjectsFactory extends BaseObjectsFactory implements ObjectsFactory {
+public class InMemoryObjectsFactory extends BaseObjectsFactory implements ObjectsFactory {
 
     private ParcelTransport parcelTransport = new InMemoryParcelTransport();
 

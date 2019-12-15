@@ -1,8 +1,8 @@
 package com.kabanov.messaging.di;
 
+import com.kabanov.messaging.di.factory.InMemoryObjectsFactory;
 import com.kabanov.messaging.di.factory.ObjectsFactory;
 import com.kabanov.messaging.di.factory.SocketObjectsFactory;
-import com.kabanov.messaging.di.factory.ThreadObjectsFactory;
 
 /**
  * @author Kabanov Alexey
@@ -17,7 +17,7 @@ public enum Profile {
     IN_MEMORY_QUEUE_COMMUNICATION {
         @Override
         public ObjectsFactory createObjectsFactory() {
-            return new ThreadObjectsFactory();
+            return new InMemoryObjectsFactory();
         }
     };
 
