@@ -42,6 +42,18 @@ public class MultipleJVMApplication {
                 localPlayerProperties.getOpponentName(),
                 localPlayerProperties.getPlayerType());
 
+        /*
+          I do not like the idea of cast here, but I don't know how to do it better. 
+          The problem is: method `register` required for `SocketParcelTransport` only, but not for `InMemoryParcelTransport`
+          
+          Other possible solutions: 
+           - move register method into `ParcelTransport` interface, but it will break SOLID principle, because we will 
+                force `InMemoryParcelTransport` to implement method `register`, which will not be used. 
+           - create factory for `SocketParcelTransport` and register listeners only on `SocketParcelTransport` creation. 
+                But in that case we will lose the possibility to add listeners after transport creation. 
+           
+          I don't like all of these two solutions, and I think they are worse than casting.       
+         */
         registerPlayers((SocketParcelTransport)packsTransport, playersProperties);
 
         service.submit(localPlayer::start);

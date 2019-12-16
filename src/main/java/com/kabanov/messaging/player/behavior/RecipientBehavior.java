@@ -31,8 +31,9 @@ public class RecipientBehavior implements Behavior {
         while (!stopFlag) {
             Message message = receiver.receive();
             if (message != null) {
-                Message reply = replyCreator.createReply(message);
-                sender.send(opponentName, reply);
+                String reply = replyCreator.createReply(message.getText());
+                Message replyMessage = new Message(reply);
+                sender.send(opponentName, replyMessage);
             } else {
                 stop();
             }

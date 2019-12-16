@@ -6,9 +6,9 @@ import java.util.Properties;
  * @author Kabanov Alexey
  */
 public class RemotePlayerProperties {
-    String name;
-    String host;
-    int port;
+    private String name;
+    private String host;
+    private int port;
 
     public RemotePlayerProperties(Properties properties) {
         port = Integer.parseInt(properties.getProperty("remote_player/port"));

@@ -33,7 +33,8 @@ public class InitiativeBehavior implements Behavior {
     @Override
     public void invoke() {
         for (int i = 0; i < initiatorPlayerProperties.getNumberOfMessagesToSend() && !stopFlag; i++) {
-            Message message = messageCreator.createMessage();
+            String text = messageCreator.createMessage();
+            Message message = new Message(text);
             sender.send(opponentName, message);
             receiver.receive();
         }

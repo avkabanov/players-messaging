@@ -41,15 +41,23 @@ In order to use Socket Transport, host and port for each player should be specif
 corresponding `.properties` file. Since `local_player` can only be started locally, 
 host is always `localhost` and only port requires to be specified.
 
-## How to Run
+## Build and Run
+
+### How to build
+Application can be built with the command: 
+```
+mvn package
+```    
+It will generate `jar` file inside `/target/` diretory
+
+### How to run
 There are two entry point with `public static void main()` method: 
  - `com.kabanov.messaging.SingleJVMApplication` starts two players within one JVM
  - `com.kabanov.messaging.MultipleJVMApplication` starts players in different JVM. It takes name 
  of properties files as start parameter. In order to start two players - this class should be launched
  twice - for each player. With corresponding properties for each player
  
- ### Run Example
- // TODO add
+
 
 
 

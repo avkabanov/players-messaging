@@ -16,13 +16,12 @@ import com.kabanov.messaging.transport.data.Parcel;
  */
 public class InMemoryParcelTransport implements ParcelTransport {
     private static final Logger logger = LoggerFactory.getLogger(InMemoryParcelTransport.class);
-    
+
     private ConcurrentHashMap<String, BlockingQueue<Parcel>> parcelList = new ConcurrentHashMap<>();
-    
+
     @Override
     public void send(Parcel parcel) {
-        logger.info(
-                "Message sent for " + parcel.getReceiverName() + " with text: " + parcel.getBody().getText());
+        logger.info("Message sent for " + parcel.getReceiverName() + " with text: " + parcel.getBody().getText());
         parcelList.computeIfAbsent(parcel.getReceiverName(), (n) -> new LinkedBlockingQueue<>()).add(parcel);
     }
 

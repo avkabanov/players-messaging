@@ -8,10 +8,10 @@ import com.kabanov.messaging.di.PlayerType;
  * @author Kabanov Alexey
  */
 public class LocalPlayerProperties {
-    PlayerType playerType;
-    int port;
-    String name;
-    String opponentName;
+    private PlayerType playerType;
+    private int port;
+    private String name;
+    private String opponentName;
 
     public LocalPlayerProperties(Properties properties) {
         playerType = PlayerType.parseString(properties.getProperty("local_player/type"));;

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 public class RandomMessageCreator implements MessageCreator {
     
     @Override
-    public Message createMessage() {
-        return new Message(RandomStringUtils.randomAlphabetic(10));
+    public String createMessage() {
+        return RandomStringUtils.randomAlphabetic(10);
     }
 }

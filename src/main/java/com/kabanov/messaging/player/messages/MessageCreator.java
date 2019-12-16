@@ -5,5 +5,5 @@ package com.kabanov.messaging.player.messages;
  */
 public interface MessageCreator {
     
-    Message createMessage();
+    String createMessage();
 }

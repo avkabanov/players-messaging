@@ -5,5 +5,5 @@ package com.kabanov.messaging.player.messages;
  */
 public interface ReplyCreator {
     
-    Message createReply(Message message);
+    String createReply(String message);
 }
