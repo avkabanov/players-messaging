@@ -10,6 +10,8 @@ transferred using inMemory message queue or using socket.
 more specific class: `com.kabanov.messaging.player.behavior.InitiativeBehavior` and 
 `com.kabanov.messaging.player.behavior.RecipientBehavior`
 
+Number of messages that should be sent by initiator - I've extracted into separate `initiator_player.properties` file
+
 ### Transport
 #### Data
 `com.kabanov.messaging.transport.data.Parcel` is the data type that can be transferred using any of the transport implementation.
@@ -48,7 +50,7 @@ Application can be built with the command:
 ```
 mvn package
 ```    
-It will generate `jar` file inside `/target/` diretory
+It will generate `uber jar` file `players-messaging-1.0-jar-with-dependencies` inside `/target/` directory
 
 ### How to run
 There are two entry point with `public static void main()` method: 
@@ -56,6 +58,24 @@ There are two entry point with `public static void main()` method:
  - `com.kabanov.messaging.MultipleJVMApplication` starts players in different JVM. It takes name 
  of properties files as start parameter. In order to start two players - this class should be launched
  twice - for each player. With corresponding properties for each player
+ 
+ #### Start two players within one JVM: 
+ 1. go to the location of `players-messaging-1.0-jar-with-dependencies.jar` 
+ 2. execute the command 
+```
+    java -cp players-messaging-1.0-jar-with-dependencies.jar com.kabanov.messaging.SingleJVMApplication
+```  
+
+ #### Start each player inside it's own JVM: 
+ 1. go to the location of `players-messaging-1.0-jar-with-dependencies.jar` 
+ 2. Start initiator player with the command 
+```
+    java -cp players-messaging-1.0-jar-with-dependencies.jar com.kabanov.messaging.MultipleJVMApplication initiator_player_connections.properties
+```   
+ 3. Start responding player with the command 
+```
+    java -cp players-messaging-1.0-jar-with-dependencies.jar com.kabanov.messaging.MultipleJVMApplication responding_player_connections.properties
+```
  
 
 
