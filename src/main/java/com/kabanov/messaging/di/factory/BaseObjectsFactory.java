@@ -10,7 +10,7 @@ import com.kabanov.messaging.player.Sender;
 import com.kabanov.messaging.player.behavior.InitiativeBehavior;
 import com.kabanov.messaging.player.behavior.RecipientBehavior;
 import com.kabanov.messaging.player.messages.IncrementingReplyCreator;
-import com.kabanov.messaging.player.messages.RandomMessageCreator;
+import com.kabanov.messaging.player.messages.PropertiesInitialMessageCreator;
 import com.kabanov.messaging.properties.InitiatorPlayerProperties;
 
 /**
@@ -46,21 +46,24 @@ public abstract class BaseObjectsFactory implements ObjectsFactory {
     }
 
     public Player createInitiatorPlayer(String playerName, String opponentName) {
+        Sender sender = new Sender(getParcelTransport());
         return new PlayerImpl(playerName,
                 new InitiativeBehavior(
-                        new Sender(getParcelTransport()),
+                        sender,
                         new Receiver(playerName, getParcelTransport()),
-                        new RandomMessageCreator(),
+                        new PropertiesInitialMessageCreator(initiatorPlayerProperties),
+                        new IncrementingReplyCreator(sender), 
                         opponentName,
                         getInitiatorPlayerProperties()));
     }
 
     public Player createRespondingPlayer(String playerName, String opponentName) {
+        Sender sender = new Sender(getParcelTransport());
         return new PlayerImpl(playerName,
                 new RecipientBehavior(
-                        new Sender(getParcelTransport()),
+                        sender,
                         new Receiver(playerName, getParcelTransport()),
-                        new IncrementingReplyCreator(),
+                        new IncrementingReplyCreator(sender),
                         opponentName)
         );
     }

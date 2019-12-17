@@ -15,6 +15,8 @@ import com.kabanov.messaging.player.Player;
  */
 public class SingleJVMApplication {
 
+    // TODO run properties validator
+    // TODO Think about merging behavior
     public static final Profile PROFILE = Profile.IN_MEMORY_QUEUE_COMMUNICATION;
     private ObjectsFactory objectFactory = PROFILE.createObjectsFactory();
     

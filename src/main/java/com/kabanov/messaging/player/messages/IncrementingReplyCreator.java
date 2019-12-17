@@ -5,7 +5,11 @@ package com.kabanov.messaging.player.messages;
  */
 public class IncrementingReplyCreator implements ReplyCreator {
 
-    private int respondsCounter;
+    private SentMessageCounter sentMessageCounter;
+
+    public IncrementingReplyCreator(SentMessageCounter sentMessageCounter) {
+        this.sentMessageCounter = sentMessageCounter;
+    }
 
     @Override
     public String createReply(String message) {
@@ -13,6 +17,6 @@ public class IncrementingReplyCreator implements ReplyCreator {
     }
 
     public String createSuffix() {
-        return String.valueOf(respondsCounter++);
+        return String.valueOf(sentMessageCounter.getNumberOfSentMessages());
     }
 }
