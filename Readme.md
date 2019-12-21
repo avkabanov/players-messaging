@@ -2,7 +2,10 @@
 
 ## Overview 
 In this solution communication between two players is implemented. Messages can be transferred using inMemory 
-message queue or using socket.   
+message queue or using socket.  
+
+### Restrictions
+Only java core is allowed to use. All frameworks are restricted
 
 ## Structure Overview
 ### Players
